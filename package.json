@@ -1,12 +1,17 @@
 {
   "name": "ripgit-tests",
   "private": true,
+  "type": "module",
   "scripts": {
     "build:worker": "cargo install -q \"worker-build@^0.7\" && worker-build --release",
+    "dev": "cf dev",
+    "deploy": "cf deploy",
     "test": "npm run build:worker && NODE_OPTIONS='--experimental-vm-modules' vitest run"
   },
   "devDependencies": {
+    "cf": "1.0.0-beta.12",
     "miniflare": "4.20260317.1",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "wrangler": "^4.147.0"
   }
 }

@@ -332,7 +332,7 @@ commit info.
   partial state on DO timeout. The JS API exists, workers-rs just doesn't
   expose it yet.
 - **Repository index** — KV side-index written on push, landing page listing
-  all repos with stats. Needs a KV binding in `wrangler.toml`.
+  all repos with stats. Needs a KV binding in `cloudflare.config.ts`.
 - **Annotated tags** — Parse and store tag objects (separate from lightweight
   tag refs). Requires a `tag_objects` table + pack parser changes.
 - **Alternative auth frontends** — Bearer token-only or Cloudflare Access

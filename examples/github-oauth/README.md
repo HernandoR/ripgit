@@ -15,11 +15,11 @@ Everything else is forwarded to ripgit.
 
 ## Required Bindings And Secrets
 
-Set these in `wrangler.toml` or as Worker secrets:
+Set these in `cloudflare.config.ts` or as Worker secrets:
 
-- `GITHUB_CLIENT_ID` - GitHub OAuth App client ID (`[vars]`)
-- `GITHUB_CLIENT_SECRET` - GitHub OAuth App client secret (`wrangler secret put GITHUB_CLIENT_SECRET`)
-- `SESSION_SECRET` - random 32+ character secret for signing browser sessions (`wrangler secret put SESSION_SECRET`)
+- `GITHUB_CLIENT_ID` - GitHub OAuth App client ID (`bindings.text(...)`)
+- `GITHUB_CLIENT_SECRET` - GitHub OAuth App client secret (`cf workers secrets update GITHUB_CLIENT_SECRET --worker ripgit-auth`)
+- `SESSION_SECRET` - random 32+ character secret for signing browser sessions (`cf workers secrets update SESSION_SECRET --worker ripgit-auth`)
 - `OAUTH_KV` - KV namespace used for OAuth state, issued tokens, and token indexes
 - `RIPGIT` - Service Binding that points at the main ripgit Worker
 
@@ -43,10 +43,12 @@ npm install
 npm run dev:full
 ```
 
-That runs:
+That runs two `cf dev` servers that find each other through Wrangler's local dev
+registry, so the `RIPGIT` Service Binding declared in `cloudflare.config.ts`
+resolves:
 
 - the auth worker on `http://localhost:8787`
-- the main ripgit Worker through the local Service Binding declared in `wrangler.toml`
+- the main ripgit Worker on `http://localhost:8788`
 
 Then:
 
@@ -65,29 +67,28 @@ git push origin main
 
 ## Deployment
 
-Create the KV namespace and fill the IDs into `examples/github-oauth/wrangler.toml`:
+Create the KV namespace and fill the ID into `examples/github-oauth/cloudflare.config.ts`:
 
 ```bash
-wrangler kv namespace create OAUTH_KV
-wrangler kv namespace create OAUTH_KV --preview
+cf kv namespaces create --title OAUTH_KV
 ```
 
 Set the secrets:
 
 ```bash
-wrangler secret put GITHUB_CLIENT_SECRET
-wrangler secret put SESSION_SECRET
+cf workers secrets update GITHUB_CLIENT_SECRET --worker ripgit-auth
+cf workers secrets update SESSION_SECRET --worker ripgit-auth
 ```
 
 Deploy ripgit first, then the auth worker:
 
 ```bash
-wrangler deploy
+cf deploy
 cd examples/github-oauth
-wrangler deploy
+cf deploy
 ```
 
-Make sure the `[[services]]` binding in `examples/github-oauth/wrangler.toml` points at the deployed ripgit Worker name.
+Make sure the `RIPGIT` binding in `examples/github-oauth/cloudflare.config.ts` points at the deployed ripgit Worker name.
 
 After deployment, update the GitHub OAuth App callback URL to your deployed auth worker URL.
 

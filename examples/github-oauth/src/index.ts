@@ -22,10 +22,10 @@
  *   1. Create a GitHub OAuth App (https://github.com/settings/applications/new)
  *      Callback URL: https://your-worker.workers.dev/oauth/callback
  *      (local dev:   http://localhost:8787/oauth/callback)
- *   2. wrangler kv namespace create OAUTH_KV  → fill IDs in wrangler.toml
- *   3. wrangler secret put GITHUB_CLIENT_SECRET
- *   4. wrangler secret put SESSION_SECRET  (any random 32+ char string)
- *   5. Set GITHUB_CLIENT_ID in wrangler.toml [vars]
+ *   2. cf kv namespaces create --title OAUTH_KV  → fill the ID in cloudflare.config.ts
+ *   3. cf workers secrets update GITHUB_CLIENT_SECRET --worker ripgit-auth
+ *   4. cf workers secrets update SESSION_SECRET --worker ripgit-auth  (any random 32+ char string)
+ *   5. Set GITHUB_CLIENT_ID in cloudflare.config.ts
  */
 
 import {

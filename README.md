@@ -100,16 +100,16 @@ git push origin main
 **First-time setup:**
 
 1. Create a GitHub OAuth App — callback URL: `http://localhost:8787/oauth/callback`
-2. Set `GITHUB_CLIENT_ID` in `examples/github-oauth/wrangler.toml`
-3. `wrangler secret put GITHUB_CLIENT_SECRET`
-4. `wrangler secret put SESSION_SECRET`
-5. `wrangler kv namespace create OAUTH_KV` → fill IDs into `wrangler.toml`
+2. Set `GITHUB_CLIENT_ID` in `examples/github-oauth/cloudflare.config.ts`
+3. `cf workers secrets update GITHUB_CLIENT_SECRET --worker ripgit-auth`
+4. `cf workers secrets update SESSION_SECRET --worker ripgit-auth`
+5. `cf kv namespaces create --title OAUTH_KV` → fill the ID into `examples/github-oauth/cloudflare.config.ts`
 
 **Deploy:**
 
 ```bash
-wrangler deploy                          # ripgit worker
-cd examples/github-oauth && wrangler deploy   # auth worker
+cf deploy                          # ripgit worker
+cd examples/github-oauth && cf deploy   # auth worker
 ```
 
 Update the GitHub OAuth App's callback URL to your deployed auth worker URL.
@@ -122,14 +122,19 @@ Update the GitHub OAuth App's callback URL to your deployed auth worker URL.
 
 ## Setup (ripgit only, no auth)
 
-Prerequisites: Rust, [wrangler](https://developers.cloudflare.com/workers/wrangler/), LLVM (for zstd-sys).
+Prerequisites: Rust, the [`cf` CLI](https://developers.cloudflare.com/workers/), LLVM (for zstd-sys).
+
+The `cf` version this repo is pinned to is declared in `mise.toml`, so
+[mise](https://mise.jdx.dev/) users get it with `mise install`:
 
 ```bash
 brew install llvm
 git clone https://github.com/your-org/ripgit
 cd ripgit
-wrangler kv namespace create REGISTRY   # fill ID into wrangler.toml
-wrangler deploy
+mise install                            # installs the pinned cf CLI
+npm install                             # installs the Wrangler build backend cf delegates to
+cf kv namespaces create --title REGISTRY   # fill the ID into cloudflare.config.ts
+cf deploy
 ```
 
 Without the auth worker in front, all repos are publicly readable and writable by anyone with the URL.

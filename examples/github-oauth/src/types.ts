@@ -22,7 +22,8 @@ export interface Env {
   RIPGIT: Fetcher;
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
-  // Random secret for signing session cookies — set with: wrangler secret put SESSION_SECRET
+  // Random secret for signing session cookies — set with:
+  //   cf workers secrets update SESSION_SECRET --worker ripgit-auth
   SESSION_SECRET: string;
   // Injected by workers-oauth-provider for defaultHandler and apiHandler calls
   OAUTH_PROVIDER: OAuthHelpers;

@@ -178,6 +178,13 @@ Ok(resp)
 
 ## Development
 
+Tooling is the `cf` CLI, not `wrangler`. The pinned version lives in `mise.toml`
+(`mise install` to get it). Worker configuration is `cloudflare.config.ts`;
+`wrangler.config.ts` only holds build/bundler settings, because `cf` still
+delegates building to Wrangler as its dev-server implementation (a Rust-native
+`cloudflare-rs-dev-server` backend exists in `cf` but is not published yet).
+That is why `wrangler` remains a devDependency — nothing invokes it directly.
+
 ```bash
 # Build
 cargo build --target wasm32-unknown-unknown
@@ -186,7 +193,7 @@ cargo build --target wasm32-unknown-unknown
 cd examples/github-oauth && npm run dev:full
 
 # Run ripgit alone (no auth, all writes open)
-wrangler dev
+cf dev
 
 # Push a test repo with auth
 ./scripts/push-test.sh -u username -t TOKEN -w http://localhost:8787 -r /path/to/repo
