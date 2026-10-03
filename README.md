@@ -132,12 +132,34 @@ brew install llvm
 git clone https://github.com/your-org/ripgit
 cd ripgit
 mise install                            # installs the pinned cf CLI
-npm install                             # installs the Wrangler build backend cf delegates to
+npm install                             # installs JavaScript dependencies used by cf's build pipeline
 cf kv namespaces create --title REGISTRY   # fill the ID into cloudflare.config.ts
 cf deploy
 ```
 
 Without the auth worker in front, all repos are publicly readable and writable by anyone with the URL.
+
+## Cloudflare CLI (`cf`)
+
+This project uses Cloudflare's `cf` CLI for local development and deployment. The
+version is pinned in `mise.toml`; install it with `mise install` or use the
+version from `package.json` through npm. Worker settings belong in
+`cloudflare.config.ts`.
+
+```bash
+# Start the ripgit Worker locally
+cf dev
+
+# Create the registry KV namespace once, then add its ID to cloudflare.config.ts
+cf kv namespaces create --title REGISTRY
+
+# Deploy the ripgit Worker
+cf deploy
+```
+
+The repository still contains `wrangler.config.ts` because `cf` currently uses
+Wrangler's build backend. Wrangler is an implementation detail here; use `cf`
+for the Worker lifecycle and resource management commands.
 
 ## Architecture
 
